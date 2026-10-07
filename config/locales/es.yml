@@ -50,20 +50,16 @@ es:
   oauth_login: OAuth login
   oauth_login_info: Permitir a los usuarios autenticarse automáticamente a través del proveedor OAuth sin utilizar el formulario de login
   oauth_custom_logout_endpoint_info: Application Logout endpoint.
-  oauth_validate_user_roles_info: "Identificador del campo del token donde se encuentran los roles de usuario. Si se configura, el rol 'user' otorga acceso, 
-    el rol 'admin' otorga acceso de administrador. Si el rol 'user' no está presente, se deniega el acceso. Si el rol 'admin' no está presente, no habrá permisos de
-    administrador. Ejemplo.: Introduce 'resource_access.redmine.roles', si tu token sigue el siguiente formato:
-    'resource_access': { 'redmine': { 'roles': ['user', 'admin'] } }"
+  oauth_validate_user_roles_info: "Clave donde están los roles de usuario en el token. Si se configura, los valores de
+    'Nombre del rol de acceso' conceden acceso, los de 'Nombre del rol de administrador' conceden derechos de administrador (y también acceso).
+    Si no está presente ninguno de esos valores, se deniega el acceso. Si faltan todos los valores de administrador, se revocan los derechos de administrador."
   oauth_autologin: Autologin mediante OAuth
   oauth_version_info: Endpoint versión
   oauth_enable_group_roles_info: |
-    When enabled, any additional roles outside the default ones (admin, user) are mapped to a group of the same name.
-    Meaning, if you create a group called 'developer' and your user has a role called 'developer', the user will be
-    added to that group.
-
-    Users will be removed from any group that is not part of their roles if this option is enabled, meaning if you
-    manually add a user to the 'developer' group but they don't have the role in your identity provider, the user
-    will be removed from that group.
+    Si está activado, los roles adicionales fuera de los valores configurados de acceso/administrador se asignan a un
+    grupo del mismo nombre. El usuario será eliminado de cualquier grupo que no forme parte de sus roles si esta opción
+    está activada. Es decir, si añade manualmente un usuario al grupo 'developer' pero no tiene ese rol en el proveedor
+    de identidad, será eliminado de ese grupo.
   oauth_only_login: OAuth-only login
   oauth_only_login_info: |
     When enabled, users will be redirected straight to the OAuth provider, entirely skipping the standard login page.
@@ -76,6 +72,7 @@ es:
   oauth_imap_info: Enable this provider for IMAP
   oauth_url_parameters_info: "Additional parameters for authorization URL, e.g.: 'hd=kontron.com&access_type=offline'"
   error_invalid_hosted_domain: Hosted domain is not allowed.
+  error_oauth_role_value_too_long: El valor del rol supera %{max} bytes.
   field_url_parameters: URL parameters
   field_oauth_name: Proveedor
   field_button_color: Botón de login
@@ -86,7 +83,22 @@ es:
   field_custom_firstname_field: Nombre del campo first name del Provider
   field_custom_lasttname_field: Nombre del campo first name del Provider
   field_validate_user_roles: Validar roles de usuario
+  field_login_role_name: Nombre del rol de acceso
+  field_admin_role_name: Nombre del rol de administrador
   field_enable_group_roles: Enable group roles
+  field_create_missing_groups: Crear grupos inexistentes
+  field_group_exclude_list: No crear grupos
+  oauth_create_missing_groups_info: |
+    Junto con los roles de grupo, crea el grupo que falte a partir del valor decodificado del claim y añade al usuario.
+    Desactivado por defecto.
+  oauth_group_exclude_list_info: |
+    Valores del claim que no deben crearse como grupos. Separados por coma o salto de línea.
+    No afecta a los grupos que ya existen.
+  oauth_login_role_name_info: |
+    Valores del claim que permiten el acceso. Separados por coma o salto de línea. Vacío = 'user'.
+  oauth_admin_role_name_info: |
+    Valores del claim que otorgan administrador de Redmine (y acceso). Separados por coma o salto de línea.
+    Vacío = 'admin'.
   field_identify_user_by: Identify user by
   field_imap: IMAP
   field_custom_auth_endpoint: OAuth endpoint

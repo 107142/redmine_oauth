@@ -50,20 +50,25 @@ en:
   oauth_login: OAuth login
   oauth_login_info: Allow users to log in automatically via OAuth provider skipping the login form.
   oauth_custom_logout_endpoint_info: Application Logout endpoint.
-  oauth_validate_user_roles_info: "A key, where user roles are present in the token. If set, 'user' role grants access, 
-    'admin' grants admin rights. If 'user' role is not present, access is denied. If 'admin' role is missing, admin 
-    rights are revoked. E.g.: Enter 'resource_access.redmine.roles', if you have your token set as follows:
-    'resource_access': { 'redmine': { 'roles': ['user', 'admin'] } }"
+  oauth_validate_user_roles_info: "A key, where user roles are present in the token. If set, values listed in
+    'Login role name' grant access, values listed in 'Admin role name' grant admin rights (and also access).
+    If none of those values are present, access is denied. If every admin value is missing, admin rights are revoked."
   oauth_autologin: Autologin with OAuth provider
   oauth_version_info: Endpoint version
   oauth_enable_group_roles_info: |
-    When enabled, any additional roles outside the default ones (admin, user) are mapped to a group of the same name.
-    Meaning, if you create a group called 'developer' and your user has a role called 'developer', the user will be
-    added to that group.
-    
+    When enabled, any additional roles outside the configured login/admin values are mapped to a group of the same name.
     Users will be removed from any group that is not part of their roles if this option is enabled, meaning if you
     manually add a user to the 'developer' group but they don't have the role in your identity provider, the user
     will be removed from that group.
+  oauth_create_missing_groups_info: |
+    When enabled together with group roles, a missing group is created from the decoded claim value and the user is
+    added to it. Off by default.
+  oauth_group_exclude_list_info: |
+    Claim values that must not be created as groups. Comma or newline separated. Does not affect already existing groups.
+  oauth_login_role_name_info: |
+    Claim values that grant login. Comma or newline separated. Empty = 'user'.
+  oauth_admin_role_name_info: |
+    Claim values that grant Redmine administrator (and login). Comma or newline separated. Empty = 'admin'.
   oauth_only_login: OAuth-only login
   oauth_only_login_info: |
     When enabled, users will be redirected straight to the OAuth provider, entirely skipping the standard login page. 
@@ -76,6 +81,7 @@ en:
   oauth_imap_info: Enable this provider for IMAP
   oauth_url_parameters_info: "Additional parameters for authorization URL, e.g.: 'hd=kontron.com&access_type=offline'"
   error_invalid_hosted_domain: Hosted domain is not allowed.
+  error_oauth_role_value_too_long: Role value exceeds %{max} bytes.
   field_url_parameters: URL parameters
   field_oauth_name: Provider
   field_button_color: Login button
@@ -86,7 +92,11 @@ en:
   field_custom_firstname_field: Provider's first name field
   field_custom_lasttname_field: Provider's last name field
   field_validate_user_roles: Validate user roles
+  field_login_role_name: Login role name
+  field_admin_role_name: Admin role name
   field_enable_group_roles: Enable group roles
+  field_create_missing_groups: Create missing groups
+  field_group_exclude_list: Do not create groups
   field_identify_user_by: Identify user by
   field_imap: IMAP
   field_custom_auth_endpoint: OAuth endpoint

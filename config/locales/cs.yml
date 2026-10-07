@@ -48,20 +48,17 @@ cs:
   oauth_login: Přihlášení OAuth
   oauth_login_info: Umožní uživatelům přihlásit se automaticky pomocí poskytovatele OAuth bez přihlašovacího formuláře.
   oauth_custom_logout_endpoint_info: Endpoint pro odhlášení od poskytovatele.
-  oauth_validate_user_roles_info: "Klíč, kde jsou definované role v tokenu. Pokud je nastaveno, tak 'user' role povolí
-    přihlášení, 'admin' přidělí práva administrátora. Jestliže role 'user' není uvedena, přístup je odmítnut. Jestliže
-    chybí role 'admin', práva administrátora jsou odebrána. př.: Zadejte 'resource_access.redmine.roles', když máte
-    v tokenu nakonfigurováno toto: 'resource_access': { 'redmine': { 'roles': ['user', 'admin'] } }."
+  oauth_validate_user_roles_info: "Klíč, kde jsou v tokenu role uživatele. Pokud je nastaveno, hodnoty uvedené v
+    'Role pro přihlášení' povolí přístup, hodnoty v 'Role administrátora' udělí práva administrátora (a také přístup).
+    Pokud není přítomna žádná z těchto hodnot, přístup je odmítnut. Pokud chybí všechny hodnoty administrátora,
+    práva administrátora jsou odebrána."
   oauth_autologin: Automatické přihlašování s OAuth
   oauth_version_info: Verze endpointu
   oauth_enable_group_roles_info: |
-    Pokud je povoleno, jakékoli další role mimo výchozích (admin, user) jsou namapována na skupinu stejného jména.
-    To znamená, že když vytvoříte skupinu 'developer' a uživatel má roli 'developer', bude uživatel přidán do této
-    skupiny.
-    
-    Uživatel bude odebrán z jakékoli skupiny, která se nejmenuje jako jeho role, pokud je tato volba zapnuta. To znamená,
-    že když je uživatel ve skupině 'developer', ale nemá tuto roli přiřazenou u poskytovatele OAuth, bude z této skipny
-    odebrán,
+    Pokud je povoleno, další role mimo nakonfigurované hodnoty pro přihlášení a administrátora se mapují na skupinu
+    stejného jména. Uživatel bude odebrán z jakékoli skupiny, která není součástí jeho rolí, pokud je tato volba
+    zapnuta. To znamená, že když uživatele ručně přidáte do skupiny 'developer', ale tuto roli nemá u poskytovatele
+    identity, bude z této skupiny odebrán.
   oauth_only_login: Pouze přihlášení OAuth
   oauth_only_login_info: |
     Pokud je tato volba zapnuta, uživatelé jsou automaticky přesměrováni na přihlášení pomocí OAuth bez možnosti 
@@ -75,6 +72,7 @@ cs:
   oauth_imap_info: Povolit tohot poskytovatele pro IMAP
   oauth_url_parameters_info: "Přídavné parametry pro autorizační URL, např.: 'hd=kontron.com&access_type=offline'"
   error_invalid_hosted_domain: Hostovaná doména není povolena.
+  error_oauth_role_value_too_long: Hodnota role překračuje %{max} bajtů.
   field_url_parameters: Parametry URL
   field_oauth_name: Poskytovatel
   field_button_color: Přihlašovací tlačítko
@@ -85,7 +83,22 @@ cs:
   field_custom_firstname_field: Pole jméno
   field_custom_lastname_field: Pole příjmení
   field_validate_user_roles: Ověřit role uživatele
+  field_login_role_name: Role pro přihlášení
+  field_admin_role_name: Role administrátora
   field_enable_group_roles: Povolit skupinové role
+  field_create_missing_groups: Vytvářet chybějící skupiny
+  field_group_exclude_list: Nevytvářet skupiny
+  oauth_create_missing_groups_info: |
+    Spolu se skupinovými rolemi vytvoří chybějící skupinu z dekódované hodnoty claimu a uživatele do ní přidá.
+    Ve výchozím stavu vypnuto.
+  oauth_group_exclude_list_info: |
+    Hodnoty claimu, které se nemají vytvářet jako skupiny. Oddělené čárkou nebo novým řádkem.
+    Na již existující skupiny nemá vliv.
+  oauth_login_role_name_info: |
+    Hodnoty claimu, které povolí přihlášení. Oddělené čárkou nebo novým řádkem. Prázdné = 'user'.
+  oauth_admin_role_name_info: |
+    Hodnoty claimu, které udělí práva administrátora Redmine (a přihlášení). Oddělené čárkou nebo novým řádkem.
+    Prázdné = 'admin'.
   field_identify_user_by: Identifikovat uživatele podle
   field_imap: IMAP
   field_custom_auth_endpoint: Autorizační endpoint

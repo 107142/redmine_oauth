@@ -50,20 +50,16 @@ fr:
   oauth_login: Connexion OAuth
   oauth_login_info: Autoriser les utilisateur·trices à se connecter automatiquement via le fournisseur Oauth, esquivant le formulaire de connexion.
   oauth_custom_logout_endpoint_info: Application Logout endpoint.
-  oauth_validate_user_roles_info: "Une clé du jeton qui stocke les rôles utilisateur·trice. Si présent, le rôle 'user' attribue le droit d'accès, 
-    le rôle 'admin' attribue les droits d'admin. Si le rôle 'user' n'est pas présent, l'accès est refusé. Si le rôle 'admin' est manquant, les droits 
-    d'administration sont révoqués. Ex.: Renseigner 'resource_access.redmine.roles', si votre jeton contient la structure suivante :
-    'resource_access': { 'redmine': { 'roles': ['user', 'admin'] } }"
+  oauth_validate_user_roles_info: "Une clé du jeton où se trouvent les rôles utilisateur·trice. Si défini, les valeurs listées dans
+    'Rôle de connexion' accordent l'accès, celles de 'Rôle administrateur' accordent les droits d'administrateur (et aussi l'accès).
+    Si aucune de ces valeurs n'est présente, l'accès est refusé. Si toutes les valeurs administrateur manquent, les droits d'administration sont révoqués."
   oauth_autologin: Connexion automatique avec OAuth
   oauth_version_info: Endpoint version
   oauth_enable_group_roles_info: |
-    Lorsqu'activé, tout rôle additionnel aux rôles par défaut (admin, user) sera traduit en un groupe du même nom.
-    Ainsi, si vous créez un groupe nommé 'developer' et que votre utilisateur·trice possède un rôle nommé 'developer',
-    iel sera ajouté·e à ce groupe.
-
-    Les utilisateur·trices seront retirés de tout groupe qui ne fait pas partie de leurs rôles si cette option est activée.
-    Ainsi, si vous avez manuellement ajouté un·e utilisateur·trice au groupe 'developer' mais qu'iel ne possède pas ce rôle
-    dans le fournisseur d'identité, alors iel sera retiré·e de ce groupe.
+    Si activé, les rôles supplémentaires en dehors des valeurs de connexion/administrateur configurées sont associés à
+    un groupe du même nom. Les utilisateur·trices seront retiré·es de tout groupe qui ne fait pas partie de leurs rôles
+    si cette option est activée. Ainsi, si vous ajoutez manuellement un·e utilisateur·trice au groupe 'developer' mais
+    qu'iel n'a pas ce rôle chez le fournisseur d'identité, iel sera retiré·e de ce groupe.
   oauth_only_login: Connexion avec OAuth uniquement
   oauth_only_login_info: |
     Si activé, les utilisateur·trices seront redirigé immédiatement vers le fournisseur OAuth, esquivant complètement la page de connexion habituelle.
@@ -77,6 +73,7 @@ fr:
   oauth_imap_info: Activer ce fournisseur pour IMAP
   oauth_url_parameters_info: "Paramètres additionnels pour l'URL d'autorisation, ex.: 'hd=kontron.com&access_type=offline'"
   error_invalid_hosted_domain: Domaine hébergé non autorisé.
+  error_oauth_role_value_too_long: La valeur de rôle dépasse %{max} octets.
   field_url_parameters: Paramètres d'URL
   field_oauth_name: Fournisseur
   field_button_color: Bouton de connexion
@@ -87,7 +84,22 @@ fr:
   field_custom_firstname_field: Champ pour le prénom
   field_custom_lasttname_field: Champ pour le nom
   field_validate_user_roles: Valider les rôles utilisateur·trice
+  field_login_role_name: Rôle de connexion
+  field_admin_role_name: Rôle administrateur
   field_enable_group_roles: Activer les groupes à partir des rôles
+  field_create_missing_groups: Créer les groupes manquants
+  field_group_exclude_list: Ne pas créer ces groupes
+  oauth_create_missing_groups_info: |
+    Avec les rôles de groupe, crée le groupe manquant à partir de la valeur décodée du claim et y ajoute l'utilisateur·trice.
+    Désactivé par défaut.
+  oauth_group_exclude_list_info: |
+    Valeurs du claim à ne pas créer comme groupes. Séparées par une virgule ou un saut de ligne.
+    N'affecte pas les groupes déjà existants.
+  oauth_login_role_name_info: |
+    Valeurs du claim qui autorisent la connexion. Séparées par une virgule ou un saut de ligne. Vide = 'user'.
+  oauth_admin_role_name_info: |
+    Valeurs du claim qui donnent les droits administrateur Redmine (et la connexion). Virgule ou saut de ligne.
+    Vide = 'admin'.
   field_identify_user_by: Identifier l'utilisateur·trice par
   field_imap: IMAP
   field_custom_auth_endpoint: OAuth endpoint

@@ -50,20 +50,16 @@ de:
   oauth_login: OAuth-Anmeldung
   oauth_login_info: Ermöglicht der Benutzer automatisches Anmelden über den OAuth-Anbieter ohne des Anmeldeformulars.
   oauth_custom_logout_endpoint_info: Abmeldung-Endpunkt für Abmeldung vom OAuth-Anbieter.
-  oauth_validate_user_roles_info: "Ein Schlüssel, bei dem Benutzerrollen im Token vorhanden sind. Wenn gesetzt, 
-    die Rolle 'user' gewährt Zugriff, 'admin' gewährt Admin-Rechte. Wenn die Rolle 'user' nicht vorhanden ist, 
-    wird der Zugriff verweigert. Wenn die Rolle 'admin' fehlt, werden die Admin-Rechte widerrufen. z.B.: Geben Sie 
-    'resource_access.redmine.roles' ein, wenn Sie den Token als 'resource_access': { 'redmine': { 'roles': ['user', 'admin'] } } eingestellt."
+  oauth_validate_user_roles_info: "Ein Schlüssel, unter dem Benutzerrollen im Token vorhanden sind. Wenn gesetzt, gewähren die unter
+    'Anmelde-Rolle' aufgeführten Werte Zugriff, die unter 'Admin-Rolle' aufgeführten Werte Admin-Rechte (und auch Zugriff).
+    Wenn keiner dieser Werte vorhanden ist, wird der Zugriff verweigert. Fehlen alle Admin-Werte, werden die Admin-Rechte entzogen."
   oauth_autologin: Automatische Anmeldung mit OAuth
   oauth_version_info: Endpunkt-Version
-  oauth_enable_group_roles_info: |    
-    Wenn diese Option aktiviert ist, werden alle zusätzlichen Rollen außerhalb der Standardrollen (admin, user) einer 
-    Gruppe mit demselben Namen zugeordnet. Das heißt, wenn Sie eine Gruppe mit dem Namen 'developer' erstellen und Ihr 
-    Benutzer eine Rolle namens 'developer' hat, wird der Benutzer zu dieser Gruppe hinzugefügt.
-    
-    Benutzer werden aus allen Gruppen entfernt, die nicht Teil ihrer Rollen sind, wenn diese Option aktiviert ist. Das 
-    heißt wenn Sie Fügen Sie manuell einen Benutzer zur Gruppe 'developer' hinzu, der jedoch nicht über die Rolle in 
-    Ihrem Identitätsanbieter verfügt, den Benutzer wird aus dieser Gruppe entfernt.
+  oauth_enable_group_roles_info: |
+    Wenn aktiviert, werden zusätzliche Rollen außerhalb der konfigurierten Anmelde-/Admin-Werte einer Gruppe
+    desselben Namens zugeordnet. Benutzer werden aus jeder Gruppe entfernt, die nicht zu ihren Rollen gehört,
+    wenn diese Option aktiviert ist. Das heißt, wenn Sie einen Benutzer manuell zur Gruppe 'developer' hinzufügen,
+    er diese Rolle aber beim Identitätsanbieter nicht hat, wird er aus dieser Gruppe entfernt.
   oauth_only_login: Nur OAuth-Anmeldung
   oauth_only_login_info: |
     Wenn diese Option aktiviert ist, werden Benutzer direkt zum OAuth-Anbieter weitergeleitet, wodurch die Standard-Anmeldeseite vollständig übersprungen wird.
@@ -78,6 +74,7 @@ de:
   oauth_url_parameters_info: "Zusätzliche Parameter für die Autorisierungs-URL, 
     z.B.: 'hd=kontron.com&access_type=offline'"
   error_invalid_hosted_domain: Die gehostete Domain ist nicht erlaubt.
+  error_oauth_role_value_too_long: Rollenwert überschreitet %{max} Bytes.
   field_url_parameters: URL-Parameter
   field_oauth_name: Anbieter
   field_button_color: Anmeldebutton
@@ -88,7 +85,22 @@ de:
   field_custom_firstname_field: Vorname-Feld
   field_custom_lastname_field: Nachname-Feld
   field_validate_user_roles: Benutzerrollen überprüfen
+  field_login_role_name: Anmelde-Rolle
+  field_admin_role_name: Admin-Rolle
   field_enable_group_roles: Gruppenrollen aktivieren
+  field_create_missing_groups: Fehlende Gruppen anlegen
+  field_group_exclude_list: Gruppen nicht anlegen
+  oauth_create_missing_groups_info: |
+    Zusammen mit Gruppenrollen wird eine fehlende Gruppe aus dem dekodierten Claim-Wert erstellt und der Benutzer
+    hinzugefügt. Standardmäßig aus.
+  oauth_group_exclude_list_info: |
+    Claim-Werte, die nicht als Gruppen erstellt werden dürfen. Durch Komma oder Zeilenumbruch getrennt.
+    Hat keine Auswirkung auf bereits vorhandene Gruppen.
+  oauth_login_role_name_info: |
+    Claim-Werte, die die Anmeldung erlauben. Durch Komma oder Zeilenumbruch getrennt. Leer = 'user'.
+  oauth_admin_role_name_info: |
+    Claim-Werte, die Redmine-Administratorrechte (und Anmeldung) vergeben. Durch Komma oder Zeilenumbruch getrennt.
+    Leer = 'admin'.
   field_identify_user_by: Identifizieren des Benutzers bei
   field_imap: IMAP
   field_custom_auth_endpoint: OAuth-Endpunkt
