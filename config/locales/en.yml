@@ -59,8 +59,8 @@ en:
   oauth_version_info: Endpoint version
   oauth_enable_group_roles_info: |
     When enabled, any additional roles outside the configured login/admin values are mapped to a group of the same name
-    (exact match after percent-decoding). Meaning, if you create a group called 'developer' and your user has a role
-    called 'developer', the user will be added to that group.
+    (percent-decoded, stripped, compared case-insensitively — the same way Redmine matches group names). Meaning, if
+    you create a group called 'developer' and your user has a role called 'Developer', the user will be added to it.
 
     Users will be removed from any group that is not part of their roles if this option is enabled, meaning if you
     manually add a user to the 'developer' group but they don't have the role in your identity provider, the user
@@ -72,8 +72,8 @@ en:
     added to it. Off by default: unknown values are ignored. Names longer than 255 characters are skipped.
     The exclude list below is not created, but an already existing excluded group is still assigned.
   oauth_group_exclude_list_info: |
-    Claim values that must not be created as groups. Comma or newline separated. Percent-decoded before matching.
-    Does not remove membership of a group that already exists.
+    Claim values that must not be created as groups. Comma or newline separated. Percent-decoded, stripped, and
+    compared case-insensitively. Does not remove membership of a group that already exists.
   oauth_login_role_name_info: |
     Claim values that grant login. Comma or newline separated. Empty = 'user'. Percent-encoded URNs are decoded
     before matching, so '%20' and a space are the same value. '+' is not turned into a space. Max 1024 bytes per value.

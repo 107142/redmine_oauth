@@ -210,6 +210,26 @@ class RedmineOauthControllerTest < RedmineOAuth::Test::IntegrationTest
     group&.destroy
   end
 
+  def test_matching_groups_strips_and_ignores_case
+    group = Group.create!(lastname: 'FF Cit Sys')
+    matched = @oauth_provider.matching_groups(['  ff%20cit%20sys  '])
+    assert_equal [group.id], matched.map(&:id)
+  ensure
+    group&.destroy
+  end
+
+  def test_sync_groups_does_not_create_case_variant_or_excluded_case
+    @oauth_provider.create_missing_groups = true
+    @oauth_provider.group_exclude_list = 'Keep Out'
+    existing = Group.create!(lastname: 'Faculty')
+    assert_no_difference 'Group.count' do
+      matched = @oauth_provider.sync_groups([' faculty ', 'keep out'])
+      assert_equal [existing.id], matched.map(&:id)
+    end
+  ensure
+    existing&.destroy
+  end
+
   def test_sync_groups_does_not_create_unless_enabled
     assert_no_difference 'Group.count' do
       matched = @oauth_provider.sync_groups(['brand new group'])

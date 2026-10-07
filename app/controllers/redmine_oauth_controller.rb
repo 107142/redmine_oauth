@@ -269,7 +269,7 @@ class RedmineOauthController < AccountController
         invalid_credentials
         raise StandardError, l(:notice_account_invalid_credentials)
       end
-      non_default_roles = roles - oauth_provider.reserved_role_values
+      non_default_roles = oauth_provider.group_role_names(roles)
     end
 
     # Try to log in

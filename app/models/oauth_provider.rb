@@ -63,6 +63,11 @@ class OauthProvider < ApplicationRecord
     list.presence || Array(default)
   end
 
+  # Same comparison Redmine uses for Group.named and lastname uniqueness: strip, then case-insensitive.
+  def self.group_name_key(value)
+    decode_role_value(value).strip.downcase
+  end
+
   def login_role_values
     raw = has_attribute?(:login_role_name) ? login_role_name : nil
     self.class.parse_role_list(raw, default: DEFAULT_LOGIN_ROLE)
@@ -88,21 +93,35 @@ class OauthProvider < ApplicationRecord
   end
 
   def matching_groups(role_names)
-    wanted = Array(role_names).map { |name| self.class.decode_role_value(name) }
-    Group.givable.select { |group| wanted.include?(self.class.decode_role_value(group.lastname)) }
+    wanted = Array(role_names).map { |name| self.class.group_name_key(name) }.reject(&:blank?)
+    Group.givable.select { |group| wanted.include?(self.class.group_name_key(group.lastname)) }
+  end
+
+  # Claim values that should become groups: reserved login/admin values are dropped with the same
+  # strip + case-insensitive key Redmine uses, so "Viewer" does not also create a group named viewer.
+  def group_role_names(roles)
+    reserved = reserved_role_values.map { |name| self.class.group_name_key(name) }
+    Array(roles).reject { |name| reserved.include?(self.class.group_name_key(name)) }
   end
 
   # Existing groups always, missing ones only when create_missing_groups is on.
   # group_exclude_list blocks creation only; an already existing excluded group is still assigned.
   def sync_groups(role_names)
-    wanted = Array(role_names).map { |name| self.class.decode_role_value(name) }.uniq
+    wanted = Array(role_names).filter_map { |name| self.class.decode_role_value(name).strip.presence }.uniq
     groups = matching_groups(wanted)
     return groups unless create_missing_groups_enabled?
 
-    found = groups.map { |group| self.class.decode_role_value(group.lastname) }
-    (wanted - found - excluded_group_values).each do |name|
+    found = groups.map { |group| self.class.group_name_key(group.lastname) }
+    excluded = excluded_group_values.map { |name| self.class.group_name_key(name) }
+    wanted.each do |name|
+      key = self.class.group_name_key(name)
+      next if found.include?(key) || excluded.include?(key)
+
       created = create_group_for_role(name)
-      groups << created if created
+      next unless created
+
+      groups << created
+      found << key
     end
     groups
   end
@@ -174,6 +193,7 @@ class OauthProvider < ApplicationRecord
   end
 
   def create_group_for_role(name)
+    name = self.class.decode_role_value(name).strip
     return if name.blank?
     if name.length > GROUP_NAME_MAX_LENGTH
       Rails.logger.info("OAuth skipped group longer than #{GROUP_NAME_MAX_LENGTH}: #{name}")
