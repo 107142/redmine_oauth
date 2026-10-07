@@ -144,6 +144,14 @@
         <em class="info"><%= l(:oauth_enable_group_roles_info) %></em>
       </p>
       <p>
+        <%= f.check_box :create_missing_groups %>
+        <em class="info"><%= l(:oauth_create_missing_groups_info) %></em>
+      </p>
+      <p>
+        <%= f.text_area :group_exclude_list, value: @oauth_provider.group_exclude_list, rows: 3, cols: 80 %>
+        <em class="info"><%= l(:oauth_group_exclude_list_info) %></em>
+      </p>
+      <p>
         <%= f.select :identify_user_by,
                      options_for_select([%w(email email), %w(login login)],
                                         @oauth_provider.identify_user_by.presence || 'email'),

@@ -88,6 +88,13 @@ cs:
   field_login_role_name: Role pro přihlášení
   field_admin_role_name: Role administrátora
   field_enable_group_roles: Povolit skupinové role
+  field_create_missing_groups: Vytvářet chybějící skupiny
+  field_group_exclude_list: Nevytvářet skupiny
+  oauth_create_missing_groups_info: |
+    Spolu se skupinovými rolemi vytvoří chybějící skupinu z dekódované hodnoty claimu. Ve výchozím stavu vypnuto.
+    Hodnoty delší než 255 znaků se přeskočí. Vyloučené hodnoty se nevytvářejí; existující skupina se stále přiřadí.
+  oauth_group_exclude_list_info: |
+    Hodnoty claimu, které se nemají vytvářet jako skupiny. Čárka nebo nový řádek. Před porovnáním se dekódují.
   oauth_login_role_name_info: |
     Hodnoty claimu, které povolí přihlášení. Oddělené čárkou nebo novým řádkem. Prázdné = 'user'.
     Percent-encoded URN se před porovnáním dekódují ('%20' = mezera, '+' se nemění). Max. 1024 bajtů na hodnotu.

@@ -91,6 +91,13 @@ de:
   field_login_role_name: Anmelde-Rolle
   field_admin_role_name: Admin-Rolle
   field_enable_group_roles: Gruppenrollen aktivieren
+  field_create_missing_groups: Fehlende Gruppen anlegen
+  field_group_exclude_list: Gruppen nicht anlegen
+  oauth_create_missing_groups_info: |
+    Legt zusammen mit Gruppenrollen eine fehlende Gruppe aus dem dekodierten Claim-Wert an. Standard aus.
+    Werte länger als 255 Zeichen werden übersprungen. Ausgeschlossene Werte werden nicht angelegt.
+  oauth_group_exclude_list_info: |
+    Claim-Werte, die nicht als Gruppe angelegt werden. Komma oder Zeilenumbruch. Vor dem Vergleich dekodiert.
   oauth_login_role_name_info: |
     Claim-Werte, die die Anmeldung erlauben. Komma- oder zeilengetrennt. Leer = 'user'.
     Percent-Encoding wird vor dem Vergleich dekodiert ('%20' = Leerzeichen). Max. 1024 Bytes je Wert.

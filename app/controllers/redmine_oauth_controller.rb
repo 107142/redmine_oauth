@@ -381,7 +381,7 @@ class RedmineOauthController < AccountController
     return unless user&.persisted?
 
     if oauth_provider.enable_group_roles?
-      desired_groups = oauth_provider.matching_groups(role_names)
+      desired_groups = oauth_provider.sync_groups(role_names)
       user.group_ids = desired_groups.map(&:id)
     end
 

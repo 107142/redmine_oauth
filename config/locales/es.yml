@@ -89,6 +89,13 @@ es:
   field_login_role_name: Nombre del rol de acceso
   field_admin_role_name: Nombre del rol de administrador
   field_enable_group_roles: Enable group roles
+  field_create_missing_groups: Crear grupos inexistentes
+  field_group_exclude_list: No crear grupos
+  oauth_create_missing_groups_info: |
+    Con los roles de grupo, crea el grupo que falte a partir del valor decodificado. Desactivado por defecto.
+    Se omiten nombres de más de 255 caracteres. La lista de exclusión no se crea.
+  oauth_group_exclude_list_info: |
+    Valores del claim que no deben crearse como grupos. Coma o salto de línea. Se decodifican antes de comparar.
   oauth_login_role_name_info: |
     Valores del claim que permiten el acceso. Separados por coma o salto de línea. Vacío = 'user'.
     Las URN percent-encoded se decodifican antes de comparar ('%20' = espacio). Máx. 1024 bytes por valor.

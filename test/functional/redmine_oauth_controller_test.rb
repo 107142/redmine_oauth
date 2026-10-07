@@ -209,5 +209,37 @@ class RedmineOauthControllerTest < RedmineOAuth::Test::IntegrationTest
   ensure
     group&.destroy
   end
+
+  def test_sync_groups_does_not_create_unless_enabled
+    assert_no_difference 'Group.count' do
+      matched = @oauth_provider.sync_groups(['brand new group'])
+      assert_empty matched
+    end
+  end
+
+  def test_sync_groups_creates_missing_and_skips_exclude_list
+    @oauth_provider.create_missing_groups = true
+    @oauth_provider.group_exclude_list = "keep%20out\nalready here"
+    existing = Group.create!(lastname: 'already here')
+    created = nil
+    assert_difference 'Group.count', +1 do
+      matched = @oauth_provider.sync_groups(['new faculty', 'keep out', 'already%20here'])
+      assert_includes matched.map(&:lastname), 'new faculty'
+      assert_includes matched.map(&:id), existing.id
+      assert_not_includes matched.map(&:lastname), 'keep out'
+      created = matched.detect { |group| group.lastname == 'new faculty' }
+    end
+  ensure
+    created&.destroy
+    existing&.destroy
+  end
+
+  def test_sync_groups_skips_names_longer_than_redmine_limit
+    @oauth_provider.create_missing_groups = true
+    long_name = 'g' * 256
+    assert_no_difference 'Group.count' do
+      assert_empty @oauth_provider.sync_groups([long_name])
+    end
+  end
 end
 

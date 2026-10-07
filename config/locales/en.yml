@@ -67,6 +67,13 @@ en:
     will be removed from that group.
 
     Group names use Redmine's existing 255-character lastname limit. Create the group with the percent-decoded URN.
+  oauth_create_missing_groups_info: |
+    When enabled together with group roles, a missing group is created from the decoded claim value and the user is
+    added to it. Off by default: unknown values are ignored. Names longer than 255 characters are skipped.
+    The exclude list below is not created, but an already existing excluded group is still assigned.
+  oauth_group_exclude_list_info: |
+    Claim values that must not be created as groups. Comma or newline separated. Percent-decoded before matching.
+    Does not remove membership of a group that already exists.
   oauth_login_role_name_info: |
     Claim values that grant login. Comma or newline separated. Empty = 'user'. Percent-encoded URNs are decoded
     before matching, so '%20' and a space are the same value. '+' is not turned into a space. Max 1024 bytes per value.
@@ -98,6 +105,8 @@ en:
   field_login_role_name: Login role name
   field_admin_role_name: Admin role name
   field_enable_group_roles: Enable group roles
+  field_create_missing_groups: Create missing groups
+  field_group_exclude_list: Do not create groups
   field_identify_user_by: Identify user by
   field_imap: IMAP
   field_custom_auth_endpoint: OAuth endpoint

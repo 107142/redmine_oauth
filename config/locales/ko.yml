@@ -89,6 +89,13 @@ ko:
   field_login_role_name: 로그인 역할 이름
   field_admin_role_name: 관리자 역할 이름
   field_enable_group_roles: 그룹 역할 활성화
+  field_create_missing_groups: 없는 그룹 만들기
+  field_group_exclude_list: 만들지 않을 그룹
+  oauth_create_missing_groups_info: |
+    그룹 역할과 함께 켜면 디코딩된 클레임 값으로 없는 그룹을 만듭니다. 기본값은 꺼짐.
+    255자를 넘는 이름은 건너뜁니다. 제외 목록은 만들지 않습니다.
+  oauth_group_exclude_list_info: |
+    그룹으로 만들지 않을 클레임 값. 쉼표 또는 줄바꿈. 비교 전에 디코딩됩니다.
   oauth_login_role_name_info: |
     로그인을 허용하는 클레임 값. 쉼표 또는 줄바꿈으로 구분. 비우면 'user'.
     퍼센트 인코딩된 URN은 비교 전에 디코딩됩니다('%20' = 공백). 값당 최대 1024바이트.

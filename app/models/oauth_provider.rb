@@ -42,6 +42,7 @@ class OauthProvider < ApplicationRecord
   validate :validate_role_name_lists, if: proc { has_attribute?(:login_role_name) }
 
   ROLE_VALUE_MAX_LENGTH = 1024
+  GROUP_NAME_MAX_LENGTH = 255
   DEFAULT_LOGIN_ROLE = 'user'
   DEFAULT_ADMIN_ROLE = 'admin'
 
@@ -91,6 +92,31 @@ class OauthProvider < ApplicationRecord
     Group.givable.select { |group| wanted.include?(self.class.decode_role_value(group.lastname)) }
   end
 
+  # Existing groups always, missing ones only when create_missing_groups is on.
+  # group_exclude_list blocks creation only; an already existing excluded group is still assigned.
+  def sync_groups(role_names)
+    wanted = Array(role_names).map { |name| self.class.decode_role_value(name) }.uniq
+    groups = matching_groups(wanted)
+    return groups unless create_missing_groups_enabled?
+
+    found = groups.map { |group| self.class.decode_role_value(group.lastname) }
+    (wanted - found - excluded_group_values).each do |name|
+      created = create_group_for_role(name)
+      groups << created if created
+    end
+    groups
+  end
+
+  def excluded_group_values
+    return [] unless has_attribute?(:group_exclude_list)
+
+    self.class.parse_role_list(group_exclude_list)
+  end
+
+  def create_missing_groups_enabled?
+    has_attribute?(:create_missing_groups) && create_missing_groups?
+  end
+
   def role_grants_login?(roles)
     roles.intersect?(login_role_values) || roles.intersect?(admin_role_values)
   end
@@ -122,6 +148,8 @@ class OauthProvider < ApplicationRecord
     self.enable_group_roles = params['enable_group_roles']
     self.login_role_name = params['login_role_name'] if has_attribute?(:login_role_name)
     self.admin_role_name = params['admin_role_name'] if has_attribute?(:admin_role_name)
+    self.create_missing_groups = params['create_missing_groups'] if has_attribute?(:create_missing_groups)
+    self.group_exclude_list = params['group_exclude_list'] if has_attribute?(:group_exclude_list)
     self.oauth_version = params['oauth_version']
     self.identify_user_by = params['identify_user_by']
     self.imap = params['imap']
@@ -134,12 +162,39 @@ class OauthProvider < ApplicationRecord
   private
 
   def validate_role_name_lists
-    [login_role_name, admin_role_name].each do |raw|
+    raws = [login_role_name, admin_role_name]
+    raws << group_exclude_list if has_attribute?(:group_exclude_list)
+    raws.each do |raw|
       self.class.parse_role_list(raw).each do |role|
         next unless role.bytesize > ROLE_VALUE_MAX_LENGTH
 
         errors.add(:base, "Role value exceeds #{ROLE_VALUE_MAX_LENGTH} bytes")
       end
+    end
+  end
+
+  def create_group_for_role(name)
+    return if name.blank?
+    if name.length > GROUP_NAME_MAX_LENGTH
+      Rails.logger.info("OAuth skipped group longer than #{GROUP_NAME_MAX_LENGTH}: #{name}")
+      return
+    end
+
+    existing = find_givable_group(name)
+    return existing if existing
+
+    Group.create!(lastname: name)
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
+    Rails.logger.error("OAuth group create failed for #{name}: #{e.message}")
+    find_givable_group(name)
+  end
+
+  def find_givable_group(name)
+    scope = Group.givable
+    if scope.respond_to?(:named)
+      scope.named(name).first
+    else
+      scope.where('LOWER(lastname) = LOWER(?)', name).first
     end
   end
 end
