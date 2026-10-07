@@ -87,7 +87,15 @@ fr:
   field_custom_firstname_field: Champ pour le prénom
   field_custom_lasttname_field: Champ pour le nom
   field_validate_user_roles: Valider les rôles utilisateur·trice
+  field_login_role_name: Rôle de connexion
+  field_admin_role_name: Rôle administrateur
   field_enable_group_roles: Activer les groupes à partir des rôles
+  oauth_login_role_name_info: |
+    Valeurs du claim qui autorisent la connexion. Séparées par une virgule ou un saut de ligne. Vide = 'user'.
+    Les URN percent-encodées sont décodées avant comparaison ('%20' = espace). 1024 octets max par valeur.
+  oauth_admin_role_name_info: |
+    Valeurs du claim qui donnent les droits administrateur Redmine (et la connexion). Virgule ou saut de ligne.
+    Vide = 'admin'. Décodées avant comparaison. 1024 octets max par valeur.
   field_identify_user_by: Identifier l'utilisateur·trice par
   field_imap: IMAP
   field_custom_auth_endpoint: OAuth endpoint

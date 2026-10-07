@@ -85,7 +85,15 @@ cs:
   field_custom_firstname_field: Pole jméno
   field_custom_lastname_field: Pole příjmení
   field_validate_user_roles: Ověřit role uživatele
+  field_login_role_name: Role pro přihlášení
+  field_admin_role_name: Role administrátora
   field_enable_group_roles: Povolit skupinové role
+  oauth_login_role_name_info: |
+    Hodnoty claimu, které povolí přihlášení. Oddělené čárkou nebo novým řádkem. Prázdné = 'user'.
+    Percent-encoded URN se před porovnáním dekódují ('%20' = mezera, '+' se nemění). Max. 1024 bajtů na hodnotu.
+  oauth_admin_role_name_info: |
+    Hodnoty claimu, které udělí práva administrátora (a přihlášení). Oddělené čárkou nebo novým řádkem.
+    Prázdné = 'admin'. Před porovnáním se dekódují. Max. 1024 bajtů na hodnotu.
   field_identify_user_by: Identifikovat uživatele podle
   field_imap: IMAP
   field_custom_auth_endpoint: Autorizační endpoint

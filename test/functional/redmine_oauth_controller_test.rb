@@ -131,4 +131,83 @@ class RedmineOauthControllerTest < RedmineOAuth::Test::IntegrationTest
     }
     assert_equal 'de Jong', RedmineOauthController.get_lastname(info, @oauth_provider)
   end
+
+  def test_decode_role_value_percent_decodes_but_keeps_plus
+    assert_equal 'masaryk university', OauthProvider.decode_role_value('masaryk%20university')
+    assert_equal 'masaryk university', OauthProvider.decode_role_value('masaryk university')
+    assert_equal 'a+b', OauthProvider.decode_role_value('a+b')
+    assert_equal 'res:admin', OauthProvider.decode_role_value('res%3Aadmin')
+  end
+
+  def test_parse_role_list_comma_and_newline
+    list = OauthProvider.parse_role_list(
+      'urn:geant:muni.cz:res:viewer#idm.ics.muni.cz, urn:geant:muni.cz:res:admin#idm.ics.muni.cz',
+      default: 'user'
+    )
+    assert_equal 2, list.size
+    assert_includes list, 'urn:geant:muni.cz:res:viewer#idm.ics.muni.cz'
+    list = OauthProvider.parse_role_list("one\n two%20two \n", default: 'user')
+    assert_equal ['one', 'two two'], list
+    assert_equal ['user'], OauthProvider.parse_role_list('', default: 'user')
+  end
+
+  def test_extract_roles_flattens_and_decodes_entitlements
+    @oauth_provider.validate_user_roles = 'eduperson_entitlement'
+    @oauth_provider.login_role_name = 'urn:geant:muni.cz:res:viewer#idm.ics.muni.cz'
+    @oauth_provider.admin_role_name = 'urn:geant:muni.cz:res:admin#idm.ics.muni.cz'
+    user_info = {
+      'eduperson_entitlement.0' => 'urn:geant:muni.cz:res:viewer#idm.ics.muni.cz',
+      'eduperson_entitlement.1' => 'urn:geant:muni.cz:res:admin#idm.ics.muni.cz',
+      'eduperson_entitlement.2' => 'urn:geant:muni.cz:group:MU:ff-cit-sys#idm.ics.muni.cz',
+      'email' => 'someone@muni.cz'
+    }
+    roles = @oauth_provider.extract_roles(user_info)
+    assert_equal 3, roles.size
+    assert @oauth_provider.role_grants_login?(roles)
+    assert @oauth_provider.role_grants_admin?(roles)
+    leftover = roles - @oauth_provider.reserved_role_values
+    assert_equal ['urn:geant:muni.cz:group:MU:ff-cit-sys#idm.ics.muni.cz'], leftover
+  end
+
+  def test_encoded_claim_matches_decoded_login_role
+    @oauth_provider.validate_user_roles = 'eduperson_entitlement'
+    @oauth_provider.login_role_name = 'urn:geant:muni.cz:group:MU:workplaces-employees:masaryk university'
+    @oauth_provider.admin_role_name = 'urn:geant:muni.cz:res:admin#idm.ics.muni.cz'
+    roles = @oauth_provider.extract_roles(
+      'eduperson_entitlement.0' =>
+        'urn:geant:muni.cz:group:MU:workplaces-employees:masaryk%20university'
+    )
+    assert @oauth_provider.role_grants_login?(roles)
+    assert_not @oauth_provider.role_grants_admin?(roles)
+  end
+
+  def test_extract_roles_denies_without_login_or_admin_value
+    @oauth_provider.validate_user_roles = 'eduperson_entitlement'
+    @oauth_provider.login_role_name = 'urn:geant:muni.cz:res:viewer#idm.ics.muni.cz'
+    @oauth_provider.admin_role_name = 'urn:geant:muni.cz:res:admin#idm.ics.muni.cz'
+    roles = @oauth_provider.extract_roles(
+      'eduperson_entitlement.0' => 'urn:geant:muni.cz:group:MU:ff-cit-sys#idm.ics.muni.cz'
+    )
+    assert_not @oauth_provider.role_grants_login?(roles)
+    assert_not @oauth_provider.role_grants_admin?(roles)
+  end
+
+  def test_default_user_admin_literals_still_work
+    @oauth_provider.validate_user_roles = 'roles'
+    @oauth_provider.login_role_name = nil
+    @oauth_provider.admin_role_name = nil
+    roles = @oauth_provider.extract_roles('roles.0' => 'user', 'roles.1' => 'admin')
+    assert @oauth_provider.role_grants_login?(roles)
+    assert @oauth_provider.role_grants_admin?(roles)
+    assert_equal [], roles - @oauth_provider.reserved_role_values
+  end
+
+  def test_matching_groups_decodes_both_sides
+    group = Group.create!(lastname: 'ff cit sys')
+    matched = @oauth_provider.matching_groups(['ff%20cit%20sys', 'missing'])
+    assert_equal [group.id], matched.map(&:id)
+  ensure
+    group&.destroy
+  end
 end
+

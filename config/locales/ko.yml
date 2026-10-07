@@ -86,7 +86,15 @@ ko:
   field_custom_firstname_field: 이름 필드
   field_custom_lasttname_field: 성 필드
   field_validate_user_roles: 사용자 역할 검증
+  field_login_role_name: 로그인 역할 이름
+  field_admin_role_name: 관리자 역할 이름
   field_enable_group_roles: 그룹 역할 활성화
+  oauth_login_role_name_info: |
+    로그인을 허용하는 클레임 값. 쉼표 또는 줄바꿈으로 구분. 비우면 'user'.
+    퍼센트 인코딩된 URN은 비교 전에 디코딩됩니다('%20' = 공백). 값당 최대 1024바이트.
+  oauth_admin_role_name_info: |
+    Redmine 관리자 권한(및 로그인)을 부여하는 클레임 값. 쉼표 또는 줄바꿈으로 구분.
+    비우면 'admin'. 비교 전에 디코딩됩니다. 값당 최대 1024바이트.
   field_identify_user_by: 사용자 식별 기준
   field_imap: IMAP
   field_custom_auth_endpoint: 인증 엔드포인트

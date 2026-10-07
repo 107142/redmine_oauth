@@ -86,7 +86,15 @@ es:
   field_custom_firstname_field: Nombre del campo first name del Provider
   field_custom_lasttname_field: Nombre del campo first name del Provider
   field_validate_user_roles: Validar roles de usuario
+  field_login_role_name: Nombre del rol de acceso
+  field_admin_role_name: Nombre del rol de administrador
   field_enable_group_roles: Enable group roles
+  oauth_login_role_name_info: |
+    Valores del claim que permiten el acceso. Separados por coma o salto de línea. Vacío = 'user'.
+    Las URN percent-encoded se decodifican antes de comparar ('%20' = espacio). Máx. 1024 bytes por valor.
+  oauth_admin_role_name_info: |
+    Valores del claim que otorgan administrador de Redmine (y acceso). Separados por coma o salto de línea.
+    Vacío = 'admin'. Se decodifican antes de comparar. Máx. 1024 bytes por valor.
   field_identify_user_by: Identify user by
   field_imap: IMAP
   field_custom_auth_endpoint: OAuth endpoint

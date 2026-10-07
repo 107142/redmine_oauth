@@ -88,7 +88,15 @@ de:
   field_custom_firstname_field: Vorname-Feld
   field_custom_lastname_field: Nachname-Feld
   field_validate_user_roles: Benutzerrollen überprüfen
+  field_login_role_name: Anmelde-Rolle
+  field_admin_role_name: Admin-Rolle
   field_enable_group_roles: Gruppenrollen aktivieren
+  oauth_login_role_name_info: |
+    Claim-Werte, die die Anmeldung erlauben. Komma- oder zeilengetrennt. Leer = 'user'.
+    Percent-Encoding wird vor dem Vergleich dekodiert ('%20' = Leerzeichen). Max. 1024 Bytes je Wert.
+  oauth_admin_role_name_info: |
+    Claim-Werte, die Redmine-Administratorrechte (und Anmeldung) gewähren. Komma- oder zeilengetrennt.
+    Leer = 'admin'. Wird vor dem Vergleich dekodiert. Max. 1024 Bytes je Wert.
   field_identify_user_by: Identifizieren des Benutzers bei
   field_imap: IMAP
   field_custom_auth_endpoint: OAuth-Endpunkt

@@ -260,21 +260,16 @@ class RedmineOauthController < AccountController
 
     # Roles
     non_default_roles = []
-    key = oauth_provider.validate_user_roles
-    if key.present?
-      roles = if (h = user_info.select { |k, _v| k =~ /^#{key}(\.(\d+))?$/ })
-                h.values
-              else
-                []
-              end
-      @admin = roles.include?('admin')
-      if roles.blank? || (roles.exclude?('user') && !@admin)
+    if oauth_provider.validate_user_roles.present?
+      roles = oauth_provider.extract_roles(user_info)
+      @admin = oauth_provider.role_grants_admin?(roles)
+      unless oauth_provider.role_grants_login?(roles)
         Rails.logger.info 'Authentication failed due to a missing role in the token'
         params[:username] = email
         invalid_credentials
         raise StandardError, l(:notice_account_invalid_credentials)
       end
-      non_default_roles = roles - %w[admin user]
+      non_default_roles = roles - oauth_provider.reserved_role_values
     end
 
     # Try to log in
@@ -383,14 +378,15 @@ class RedmineOauthController < AccountController
       raise StandardError, l(:notice_account_invalid_credentials)
     end
 
+    return unless user&.persisted?
+
     if oauth_provider.enable_group_roles?
-      desired_groups = Group.where(lastname: role_names)
-      user.group_ids = desired_groups.ids
+      desired_groups = oauth_provider.matching_groups(role_names)
+      user.group_ids = desired_groups.map(&:id)
     end
 
     return if @admin.nil?
 
-    user = User.find(user.id)
     Rails.logger.error(user.errors.full_messages.to_sentence) unless user.update(admin: @admin)
   end
 
